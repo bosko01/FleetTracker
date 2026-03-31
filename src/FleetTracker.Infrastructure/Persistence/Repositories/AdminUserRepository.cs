@@ -14,10 +14,13 @@ public sealed class AdminUserRepository : IAdminUserRepository
     }
 
     public async Task<AdminUser?> GetByUsernameAsync(string username, CancellationToken cancellationToken) =>
-        await _dbContext.AdminUsers.FirstOrDefaultAsync(x => x.Username == username.Trim().ToLower(), cancellationToken);
+        await _dbContext.AdminUsers.FirstOrDefaultAsync(x => x.Username == username.Trim().ToLowerInvariant(), cancellationToken);
 
     public async Task<bool> AnyAsync(CancellationToken cancellationToken) =>
         await _dbContext.AdminUsers.AnyAsync(cancellationToken);
+
+    public async Task<bool> ExistsByUsernameAsync(string username, CancellationToken cancellationToken) =>
+        await _dbContext.AdminUsers.AnyAsync(x => x.Username == username.Trim().ToLowerInvariant(), cancellationToken);
 
     public Task AddAsync(AdminUser adminUser, CancellationToken cancellationToken) => _dbContext.AdminUsers.AddAsync(adminUser, cancellationToken).AsTask();
 

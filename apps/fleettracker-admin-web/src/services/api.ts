@@ -1,7 +1,10 @@
 import { api } from './apiClient';
-import { AdminLoginResponse, Driver, Tour, Vehicle, VehicleDailySummary, VehicleMileage } from '../types/models';
+import { AdminLoginResponse, Driver, RegisterAdminRequest, RegisterAdminResponse, Tour, Vehicle, VehicleDailySummary, VehicleMileage } from '../types/models';
 
-export const authApi = { login: (username: string, password: string) => api.post<AdminLoginResponse>('/api/admin/auth/login', { username, password }).then((r) => r.data) };
+export const authApi = {
+  login: (username: string, password: string) => api.post<AdminLoginResponse>('/api/admin/auth/login', { username, password }).then((r) => r.data),
+  registerAdmin: (payload: RegisterAdminRequest) => api.post<RegisterAdminResponse>('/api/admin/auth/register', payload).then((r) => r.data),
+};
 export const vehicleApi = {
   list: () => api.get<Vehicle[]>('/api/vehicles').then((r) => r.data),
   get: (id: string) => api.get<Vehicle>(`/api/vehicles/${id}`).then((r) => r.data),
