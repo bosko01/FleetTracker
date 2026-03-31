@@ -1,13 +1,12 @@
 using FleetTracker.Application.Abstractions.Auth;
 using FleetTracker.Application.Abstractions.Persistence;
-using FleetTracker.Application.Common.Exceptions;
 using FleetTracker.Application.Features.Auth.Responses;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace FleetTracker.Application.Features.Auth.Commands.LoginAdmin;
 
-public sealed class LoginAdminCommandHandler : IRequestHandler<LoginAdminCommand, AdminLoginResponse>
+public sealed class LoginAdminCommandHandler : IRequestHandler<LoginAdminCommand, AdminLoginResponse?>
 {
     private readonly IAdminUserRepository _adminUserRepository;
     private readonly IPasswordHasher _passwordHasher;
@@ -26,7 +25,7 @@ public sealed class LoginAdminCommandHandler : IRequestHandler<LoginAdminCommand
         _logger = logger;
     }
 
-    public async Task<AdminLoginResponse> Handle(LoginAdminCommand request, CancellationToken cancellationToken)
+    public async Task<AdminLoginResponse?> Handle(LoginAdminCommand request, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Login attempt for user: {Username}", request.Username);
 
@@ -34,13 +33,13 @@ public sealed class LoginAdminCommandHandler : IRequestHandler<LoginAdminCommand
         if (user is null)
         {
             _logger.LogWarning("Login failed for user: {Username}", request.Username);
-            throw new NotFoundException("Invalid credentials.");
+            return null;
         }
 
         if (!user.IsActive || !_passwordHasher.VerifyPassword(request.Password, user.PasswordHash))
         {
             _logger.LogWarning("Login failed for user: {Username}", request.Username);
-            throw new NotFoundException("Invalid credentials.");
+            return null;
         }
 
         var token = _jwtTokenService.GenerateToken(user.Id, user.Username, user.Role);
