@@ -22,11 +22,11 @@ public sealed class CreateVehicleCommandHandler : IRequestHandler<CreateVehicleC
         if (await _vehicleRepository.ExistsByRegistrationPlateAsync(request.RegistrationPlate, null, cancellationToken))
             throw new ConflictException("A vehicle with the same registration plate already exists.");
 
-        var vehicle = Vehicle.Create(request.RegistrationPlate, request.Make, request.Model, request.Year, request.PayloadCapacityKg, request.HasRamp);
+        var vehicle = Vehicle.Create(request.RegistrationPlate, request.Make, request.Model, request.Year, request.PayloadCapacityKg, request.HasRamp, request.InitialMileageKm, DateTime.UtcNow);
 
         await _vehicleRepository.AddAsync(vehicle, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return new VehicleResponse(vehicle.Id, vehicle.RegistrationPlate, vehicle.Make, vehicle.Model, vehicle.Year, vehicle.PayloadCapacityKg, vehicle.HasRamp);
+        return new VehicleResponse(vehicle.Id, vehicle.RegistrationPlate, vehicle.Make, vehicle.Model, vehicle.Year, vehicle.PayloadCapacityKg, vehicle.HasRamp, vehicle.InitialMileageKm, vehicle.InitialMileageRecordedAtUtc);
     }
 }

@@ -7,4 +7,6 @@ public sealed record VehicleResponse(
     string Model,
     int Year,
     decimal PayloadCapacityKg,
-    bool HasRamp);
+    bool HasRamp,
+    decimal InitialMileageKm,
+    DateTime InitialMileageRecordedAtUtc);

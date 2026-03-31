@@ -24,8 +24,9 @@ public sealed class GetVehicleTotalMileageQueryHandler : IRequestHandler<GetVehi
         if (vehicle.IsDeleted)
             throw new NotFoundException("Vehicle not found.");
 
-        var totalDistance = await _tourRepository.GetTotalDistanceByVehicleAsync(request.VehicleId, cancellationToken);
+        var tourDistanceTotalKm = await _tourRepository.GetTotalDistanceByVehicleAsync(request.VehicleId, cancellationToken);
+        var currentMileageKm = vehicle.InitialMileageKm + tourDistanceTotalKm;
 
-        return new VehicleTotalMileageResponse(vehicle.Id, vehicle.RegistrationPlate, totalDistance);
+        return new VehicleTotalMileageResponse(vehicle.Id, vehicle.RegistrationPlate, vehicle.InitialMileageKm, tourDistanceTotalKm, currentMileageKm);
     }
 }
