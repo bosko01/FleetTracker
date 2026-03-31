@@ -6,6 +6,7 @@ public interface IAdminUserRepository
 {
     Task<AdminUser?> GetByUsernameAsync(string username, CancellationToken cancellationToken);
     Task<bool> AnyAsync(CancellationToken cancellationToken);
+    Task<bool> ExistsByUsernameAsync(string username, CancellationToken cancellationToken);
     Task AddAsync(AdminUser adminUser, CancellationToken cancellationToken);
     void Update(AdminUser adminUser);
 }
