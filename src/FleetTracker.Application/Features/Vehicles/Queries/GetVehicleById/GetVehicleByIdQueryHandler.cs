@@ -19,6 +19,6 @@ public sealed class GetVehicleByIdQueryHandler : IRequestHandler<GetVehicleByIdQ
         var vehicle = await _vehicleRepository.GetByIdAsync(request.Id, cancellationToken)
                       ?? throw new NotFoundException("Vehicle not found.");
 
-        return new VehicleResponse(vehicle.Id, vehicle.RegistrationPlate, vehicle.Make, vehicle.Model, vehicle.Year, vehicle.PayloadCapacityKg, vehicle.HasRamp);
+        return new VehicleResponse(vehicle.Id, vehicle.RegistrationPlate, vehicle.Make, vehicle.Model, vehicle.Year, vehicle.PayloadCapacityKg, vehicle.HasRamp, vehicle.InitialMileageKm, vehicle.InitialMileageRecordedAtUtc);
     }
 }

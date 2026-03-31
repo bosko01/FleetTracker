@@ -15,9 +15,9 @@ export function StatisticsPage() {
       <input type="date" value={date} onChange={e=>setDate(e.target.value)} />
     </div>
     <div className="grid-4">
-      <div className="card"><small>Total mileage</small><h3>{mileage.data?.totalDistanceKm ?? '-'}</h3></div>
-      <div className="card"><small>Tours</small><h3>{daily.data?.totalTours ?? '-'}</h3></div>
-      <div className="card"><small>Total unloads</small><h3>{daily.data?.totalUnloads ?? '-'}</h3></div>
+      <div className="card"><small>Current mileage</small><h3>{mileage.data?.currentMileageKm ?? '-'}</h3></div>
+      <div className="card"><small>Tour distance total</small><h3>{mileage.data?.tourDistanceTotalKm ?? '-'}</h3></div>
+      <div className="card"><small>Initial mileage</small><h3>{mileage.data?.initialMileageKm ?? '-'}</h3></div>
       <div className="card"><small>Total weight</small><h3>{daily.data?.totalWeightKg ?? '-'}</h3></div>
     </div>
   </div>;

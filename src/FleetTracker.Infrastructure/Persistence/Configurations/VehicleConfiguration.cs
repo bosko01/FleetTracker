@@ -15,6 +15,8 @@ public sealed class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
         builder.Property(x => x.Make).HasMaxLength(100).IsRequired();
         builder.Property(x => x.Model).HasMaxLength(100).IsRequired();
         builder.Property(x => x.PayloadCapacityKg).HasPrecision(18, 2);
+        builder.Property(x => x.InitialMileageKm).HasPrecision(18, 2).IsRequired();
+        builder.Property(x => x.InitialMileageRecordedAtUtc).IsRequired();
         builder.Property(x => x.HasRamp).IsRequired();
         builder.Property(x => x.IsDeleted).IsRequired();
         builder.Property(x => x.CreatedAtUtc).IsRequired();

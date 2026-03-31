@@ -17,6 +17,8 @@ public sealed class Vehicle : SoftDeletableEntity
         int year,
         decimal payloadCapacityKg,
         bool hasRamp,
+        decimal initialMileageKm,
+        DateTime initialMileageRecordedAtUtc,
         DateTime utcNow)
     {
         Id = id;
@@ -26,6 +28,8 @@ public sealed class Vehicle : SoftDeletableEntity
         Year = year;
         PayloadCapacityKg = payloadCapacityKg;
         HasRamp = hasRamp;
+        InitialMileageKm = initialMileageKm;
+        InitialMileageRecordedAtUtc = initialMileageRecordedAtUtc;
         CreatedAtUtc = utcNow;
     }
 
@@ -35,18 +39,21 @@ public sealed class Vehicle : SoftDeletableEntity
     public int Year { get; private set; }
     public decimal PayloadCapacityKg { get; private set; }
     public bool HasRamp { get; private set; }
+    public decimal InitialMileageKm { get; private set; }
+    public DateTime InitialMileageRecordedAtUtc { get; private set; }
 
     public IReadOnlyCollection<Tour> Tours => _tours;
 
-    public static Vehicle Create(string registrationPlate, string make, string model, int year, decimal payloadCapacityKg, bool hasRamp, DateTime? utcNow = null)
+    public static Vehicle Create(string registrationPlate, string make, string model, int year, decimal payloadCapacityKg, bool hasRamp, decimal initialMileageKm, DateTime? utcNow = null)
     {
-        Validate(registrationPlate, make, model, year, payloadCapacityKg);
-        return new Vehicle(Guid.NewGuid(), registrationPlate, make, model, year, payloadCapacityKg, hasRamp, utcNow ?? DateTime.UtcNow);
+        var now = utcNow ?? DateTime.UtcNow;
+        Validate(registrationPlate, make, model, year, payloadCapacityKg, initialMileageKm);
+        return new Vehicle(Guid.NewGuid(), registrationPlate, make, model, year, payloadCapacityKg, hasRamp, initialMileageKm, now, now);
     }
 
     public void UpdateDetails(string registrationPlate, string make, string model, int year, decimal payloadCapacityKg, bool hasRamp, DateTime? utcNow = null)
     {
-        Validate(registrationPlate, make, model, year, payloadCapacityKg);
+        Validate(registrationPlate, make, model, year, payloadCapacityKg, InitialMileageKm);
         RegistrationPlate = NormalizeRegistrationPlate(registrationPlate);
         Make = make.Trim();
         Model = model.Trim();
@@ -58,7 +65,7 @@ public sealed class Vehicle : SoftDeletableEntity
 
     public void SoftDelete(DateTime? utcNow = null) => MarkDeleted(utcNow ?? DateTime.UtcNow);
 
-    private static void Validate(string registrationPlate, string make, string model, int year, decimal payloadCapacityKg)
+    private static void Validate(string registrationPlate, string make, string model, int year, decimal payloadCapacityKg, decimal initialMileageKm)
     {
         if (string.IsNullOrWhiteSpace(registrationPlate)) throw new DomainRuleViolationException("Registration plate is required.");
         if (string.IsNullOrWhiteSpace(make)) throw new DomainRuleViolationException("Make is required.");
@@ -67,6 +74,7 @@ public sealed class Vehicle : SoftDeletableEntity
         var maxYear = DateTime.UtcNow.Year + 1;
         if (year < 1950 || year > maxYear) throw new DomainRuleViolationException($"Year must be between 1950 and {maxYear}.");
         if (payloadCapacityKg < 0) throw new DomainRuleViolationException("Payload capacity must be greater than or equal to zero.");
+        if (initialMileageKm < 0) throw new DomainRuleViolationException("Initial mileage must be greater than or equal to zero.");
     }
 
     private static string NormalizeRegistrationPlate(string registrationPlate) => registrationPlate.Trim().ToUpperInvariant();

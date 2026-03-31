@@ -29,6 +29,6 @@ public sealed class UpdateVehicleCommandHandler : IRequestHandler<UpdateVehicleC
         _vehicleRepository.Update(vehicle);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return new VehicleResponse(vehicle.Id, vehicle.RegistrationPlate, vehicle.Make, vehicle.Model, vehicle.Year, vehicle.PayloadCapacityKg, vehicle.HasRamp);
+        return new VehicleResponse(vehicle.Id, vehicle.RegistrationPlate, vehicle.Make, vehicle.Model, vehicle.Year, vehicle.PayloadCapacityKg, vehicle.HasRamp, vehicle.InitialMileageKm, vehicle.InitialMileageRecordedAtUtc);
     }
 }

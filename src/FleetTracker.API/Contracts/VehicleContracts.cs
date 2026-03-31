@@ -6,7 +6,8 @@ public sealed record CreateVehicleRequest(
     string Model,
     int Year,
     decimal PayloadCapacityKg,
-    bool HasRamp);
+    bool HasRamp,
+    decimal InitialMileageKm);
 
 public sealed record UpdateVehicleRequest(
     string RegistrationPlate,

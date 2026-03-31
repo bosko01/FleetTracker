@@ -17,7 +17,7 @@ public sealed class GetAllVehiclesQueryHandler : IRequestHandler<GetAllVehiclesQ
     {
         var vehicles = await _vehicleRepository.GetAllAsync(cancellationToken);
         return vehicles
-            .Select(v => new VehicleListItemResponse(v.Id, v.RegistrationPlate, v.Make, v.Model, v.Year, v.PayloadCapacityKg, v.HasRamp))
+            .Select(v => new VehicleListItemResponse(v.Id, v.RegistrationPlate, v.Make, v.Model, v.Year, v.PayloadCapacityKg, v.HasRamp, v.InitialMileageKm, v.InitialMileageRecordedAtUtc))
             .ToList();
     }
 }
