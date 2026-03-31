@@ -1,19 +1,27 @@
 using FleetTracker.Application.Abstractions.Persistence;
 using FleetTracker.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace FleetTracker.Infrastructure.Persistence.Repositories;
 
 public sealed class TourRepository : ITourRepository
 {
     private readonly FleetTrackerDbContext _dbContext;
+    private readonly ILogger<TourRepository> _logger;
 
-    public TourRepository(FleetTrackerDbContext dbContext)
+    public TourRepository(FleetTrackerDbContext dbContext, ILogger<TourRepository> logger)
     {
         _dbContext = dbContext;
+        _logger = logger;
     }
 
-    public Task AddAsync(Tour tour, CancellationToken cancellationToken) => _dbContext.Tours.AddAsync(tour, cancellationToken).AsTask();
+    public Task AddAsync(Tour tour, CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Created Tour: VehicleId={VehicleId}, DriverId={DriverId}, Date={Date}, TourNumber={TourNumber}",
+            tour.VehicleId, tour.DriverId, tour.Date, tour.TourNumber);
+        return _dbContext.Tours.AddAsync(tour, cancellationToken).AsTask();
+    }
 
     public async Task<Tour?> GetByIdAsync(Guid id, CancellationToken cancellationToken) =>
         await _dbContext.Tours.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
@@ -73,7 +81,15 @@ public sealed class TourRepository : ITourRepository
     public async Task<decimal> GetTotalDistanceByVehicleAsync(Guid vehicleId, CancellationToken cancellationToken) =>
         await _dbContext.Tours.Where(t => t.VehicleId == vehicleId).SumAsync(t => t.DistanceKm, cancellationToken);
 
-    public void Update(Tour tour) => _dbContext.Tours.Update(tour);
+    public void Update(Tour tour)
+    {
+        _logger.LogInformation("Updated Tour: Id={TourId}", tour.Id);
+        _dbContext.Tours.Update(tour);
+    }
 
-    public void Remove(Tour tour) => _dbContext.Tours.Remove(tour);
+    public void Remove(Tour tour)
+    {
+        _logger.LogInformation("Deleted Tour: Id={TourId}", tour.Id);
+        _dbContext.Tours.Remove(tour);
+    }
 }
