@@ -10,10 +10,12 @@ namespace FleetTracker.API.Middleware;
 public sealed class GlobalExceptionHandlingMiddleware
 {
     private readonly RequestDelegate _next;
+    private readonly ILogger<GlobalExceptionHandlingMiddleware> _logger;
 
-    public GlobalExceptionHandlingMiddleware(RequestDelegate next)
+    public GlobalExceptionHandlingMiddleware(RequestDelegate next, ILogger<GlobalExceptionHandlingMiddleware> logger)
     {
         _next = next;
+        _logger = logger;
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -24,12 +26,18 @@ public sealed class GlobalExceptionHandlingMiddleware
         }
         catch (Exception exception)
         {
-            await HandleExceptionAsync(context, exception);
+            await HandleExceptionAsync(context, exception, _logger);
         }
     }
 
-    private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
+    private static async Task HandleExceptionAsync(HttpContext context, Exception exception, ILogger logger)
     {
+        logger.LogError(
+            exception,
+            "Unhandled exception on {RequestPath}. Message: {ExceptionMessage}",
+            context.Request.Path,
+            exception.Message);
+
         var (statusCode, response) = exception switch
         {
             NotFoundException => (HttpStatusCode.NotFound, new ErrorResponse(exception.Message)),

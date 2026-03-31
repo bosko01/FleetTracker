@@ -1,5 +1,6 @@
 using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace FleetTracker.Application.Behaviors;
 
@@ -7,10 +8,14 @@ public sealed class ValidationPipelineBehavior<TRequest, TResponse> : IPipelineB
     where TRequest : notnull
 {
     private readonly IEnumerable<IValidator<TRequest>> _validators;
+    private readonly ILogger<ValidationPipelineBehavior<TRequest, TResponse>> _logger;
 
-    public ValidationPipelineBehavior(IEnumerable<IValidator<TRequest>> validators)
+    public ValidationPipelineBehavior(
+        IEnumerable<IValidator<TRequest>> validators,
+        ILogger<ValidationPipelineBehavior<TRequest, TResponse>> logger)
     {
         _validators = validators;
+        _logger = logger;
     }
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
@@ -27,6 +32,12 @@ public sealed class ValidationPipelineBehavior<TRequest, TResponse> : IPipelineB
 
         if (failures.Count > 0)
         {
+            var errorMessages = failures.Select(failure => failure.ErrorMessage).ToArray();
+            _logger.LogWarning(
+                "Validation failed for {RequestType}: {ValidationErrors}",
+                typeof(TRequest).Name,
+                string.Join(" | ", errorMessages));
+
             throw new ValidationException(failures);
         }
 
