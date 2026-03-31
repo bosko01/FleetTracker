@@ -15,4 +15,5 @@ public sealed record UpdateVehicleRequest(
     string Model,
     int Year,
     decimal PayloadCapacityKg,
-    bool HasRamp);
+    bool HasRamp,
+    decimal InitialMileageKm);

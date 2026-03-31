@@ -14,7 +14,8 @@ export function AppRoutes() {
     <Route path="/login" element={<LoginPage />} />
     <Route path="/register" element={<RegisterPage />} />
     <Route path="/" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
-      <Route index element={<DashboardPage />} />
+      <Route index element={<Navigate to="/dashboard" replace />} />
+      <Route path="dashboard" element={<DashboardPage />} />
       <Route path="vehicles" element={<VehiclesListPage />} />
       <Route path="vehicles/new" element={<CreateVehiclePage />} />
       <Route path="vehicles/:id/edit" element={<EditVehiclePage />} />

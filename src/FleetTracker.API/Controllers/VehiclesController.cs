@@ -55,7 +55,8 @@ public sealed class VehiclesController : ControllerBase
             request.Model,
             request.Year,
             request.PayloadCapacityKg,
-            request.HasRamp), cancellationToken);
+            request.HasRamp,
+            request.InitialMileageKm), cancellationToken);
 
         return Ok(response);
     }

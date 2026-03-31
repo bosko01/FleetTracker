@@ -10,4 +10,5 @@ public sealed record UpdateVehicleCommand(
     string Model,
     int Year,
     decimal PayloadCapacityKg,
-    bool HasRamp) : IRequest<VehicleResponse>;
+    bool HasRamp,
+    decimal InitialMileageKm) : IRequest<VehicleResponse>;

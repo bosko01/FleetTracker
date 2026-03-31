@@ -51,15 +51,16 @@ public sealed class Vehicle : SoftDeletableEntity
         return new Vehicle(Guid.NewGuid(), registrationPlate, make, model, year, payloadCapacityKg, hasRamp, initialMileageKm, now, now);
     }
 
-    public void UpdateDetails(string registrationPlate, string make, string model, int year, decimal payloadCapacityKg, bool hasRamp, DateTime? utcNow = null)
+    public void UpdateDetails(string registrationPlate, string make, string model, int year, decimal payloadCapacityKg, bool hasRamp, decimal initialMileageKm, DateTime? utcNow = null)
     {
-        Validate(registrationPlate, make, model, year, payloadCapacityKg, InitialMileageKm);
+        Validate(registrationPlate, make, model, year, payloadCapacityKg, initialMileageKm);
         RegistrationPlate = NormalizeRegistrationPlate(registrationPlate);
         Make = make.Trim();
         Model = model.Trim();
         Year = year;
         PayloadCapacityKg = payloadCapacityKg;
         HasRamp = hasRamp;
+        InitialMileageKm = initialMileageKm;
         MarkModified(utcNow ?? DateTime.UtcNow);
     }
 

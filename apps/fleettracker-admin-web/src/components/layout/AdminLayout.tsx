@@ -2,12 +2,11 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { authStorage } from '../../services/authStorage';
 
 const menu = [
-  ['Dashboard', '/'],
+  ['Dashboard', '/dashboard'],
   ['Vehicles', '/vehicles'],
   ['Drivers', '/drivers'],
   ['Tours', '/tours'],
   ['Statistics', '/statistics'],
-  ['Daily Summary', '/daily-summary'],
 ] as const;
 
 export function AdminLayout() {
