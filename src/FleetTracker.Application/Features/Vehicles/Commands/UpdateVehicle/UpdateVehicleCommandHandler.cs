@@ -24,7 +24,14 @@ public sealed class UpdateVehicleCommandHandler : IRequestHandler<UpdateVehicleC
         if (await _vehicleRepository.ExistsByRegistrationPlateAsync(request.RegistrationPlate, request.Id, cancellationToken))
             throw new ConflictException("A vehicle with the same registration plate already exists.");
 
-        vehicle.UpdateDetails(request.RegistrationPlate, request.Make, request.Model, request.Year, request.PayloadCapacityKg, request.HasRamp);
+        vehicle.UpdateDetails(
+            request.RegistrationPlate,
+            request.Make,
+            request.Model,
+            request.Year,
+            request.PayloadCapacityKg,
+            request.HasRamp,
+            request.InitialMileageKm);
 
         _vehicleRepository.Update(vehicle);
         await _unitOfWork.SaveChangesAsync(cancellationToken);

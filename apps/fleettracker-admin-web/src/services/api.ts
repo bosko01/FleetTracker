@@ -9,7 +9,7 @@ export const vehicleApi = {
   list: () => apiClient.get<Vehicle[]>('/api/vehicles').then((r) => r.data),
   get: (id: string) => apiClient.get<Vehicle>(`/api/vehicles/${id}`).then((r) => r.data),
   create: (payload: Omit<Vehicle, 'id' | 'initialMileageRecordedAtUtc'>) => apiClient.post('/api/vehicles', payload),
-  update: (id: string, payload: Omit<Vehicle, 'id' | 'initialMileageRecordedAtUtc' | 'initialMileageKm'>) => apiClient.put(`/api/vehicles/${id}`, payload),
+  update: (id: string, payload: Omit<Vehicle, 'id' | 'initialMileageRecordedAtUtc'>) => apiClient.put(`/api/vehicles/${id}`, payload),
   remove: (id: string) => apiClient.delete(`/api/vehicles/${id}`),
 };
 export const driverApi = {

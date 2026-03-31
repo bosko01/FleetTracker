@@ -14,5 +14,6 @@ public sealed class UpdateVehicleCommandValidator : AbstractValidator<UpdateVehi
         RuleFor(x => x.Model).NotEmpty().MaximumLength(100);
         RuleFor(x => x.Year).InclusiveBetween(1950, maxYear);
         RuleFor(x => x.PayloadCapacityKg).GreaterThanOrEqualTo(0);
+        RuleFor(x => x.InitialMileageKm).GreaterThanOrEqualTo(0);
     }
 }
