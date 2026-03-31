@@ -20,8 +20,11 @@ public sealed class AdminAuthController : ControllerBase
 
     [AllowAnonymous]
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] AdminLoginRequest request, CancellationToken cancellationToken) =>
-        Ok(await _mediator.Send(new LoginAdminCommand(request.Username, request.Password), cancellationToken));
+    public async Task<IActionResult> Login([FromBody] AdminLoginRequest request, CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(new LoginAdminCommand(request.Username, request.Password), cancellationToken);
+        return response is null ? Unauthorized() : Ok(response);
+    }
 
     // MVP bootstrap choice: registration is currently anonymous and can later be protected with [Authorize(Roles = "Admin")].
     [AllowAnonymous]
