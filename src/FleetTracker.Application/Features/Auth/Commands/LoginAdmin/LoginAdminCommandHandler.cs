@@ -32,13 +32,29 @@ public sealed class LoginAdminCommandHandler : IRequestHandler<LoginAdminCommand
         var user = await _adminUserRepository.GetByUsernameAsync(request.Username, cancellationToken);
         if (user is null)
         {
-            _logger.LogWarning("Login failed for user: {Username}", request.Username);
+            _logger.LogWarning("Login failed for user: {Username}. Reason: user_not_found", request.Username);
             return null;
         }
 
-        if (!user.IsActive || !_passwordHasher.VerifyPassword(request.Password, user.PasswordHash))
+        if (!user.IsActive)
         {
-            _logger.LogWarning("Login failed for user: {Username}", request.Username);
+            _logger.LogWarning("Login failed for user: {Username}. Reason: user_inactive", user.Username);
+            return null;
+        }
+
+        var isBcryptHashFormat = user.PasswordHash.StartsWith("$2", StringComparison.Ordinal);
+        var isPasswordValid = _passwordHasher.VerifyPassword(request.Password, user.PasswordHash);
+
+        _logger.LogInformation(
+            "Login credential check for user: {Username}. UserFound: true, HashLooksBcrypt: {HashLooksBcrypt}, PasswordVerified: {PasswordVerified}, Hasher: {HasherType}",
+            user.Username,
+            isBcryptHashFormat,
+            isPasswordValid,
+            _passwordHasher.GetType().Name);
+
+        if (!isPasswordValid)
+        {
+            _logger.LogWarning("Login failed for user: {Username}. Reason: invalid_password", user.Username);
             return null;
         }
 
