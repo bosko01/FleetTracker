@@ -8,6 +8,9 @@ public interface ITourRepository
     Task<Tour?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
     Task<IReadOnlyList<Tour>> GetByVehicleAsync(Guid vehicleId, CancellationToken cancellationToken);
     Task<IReadOnlyList<Tour>> GetByVehicleAndDateAsync(Guid vehicleId, DateOnly date, CancellationToken cancellationToken);
+    Task<IReadOnlyList<Tour>> GetByDriverAndDateAsync(Guid driverId, DateOnly date, CancellationToken cancellationToken);
+    Task<IReadOnlyList<Tour>> GetFilteredAsync(DateOnly? date, Guid? vehicleId, Guid? driverId, CancellationToken cancellationToken);
+    Task<int> GetMaxTourNumberForVehicleAndDateAsync(Guid vehicleId, DateOnly date, CancellationToken cancellationToken);
     Task<bool> ExistsByVehicleDateAndTourNumberAsync(Guid vehicleId, DateOnly date, int tourNumber, Guid? excludeId, CancellationToken cancellationToken);
     Task<decimal> GetTotalDistanceByVehicleAsync(Guid vehicleId, CancellationToken cancellationToken);
     void Update(Tour tour);

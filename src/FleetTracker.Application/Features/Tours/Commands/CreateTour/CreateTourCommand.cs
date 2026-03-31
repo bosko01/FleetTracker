@@ -5,8 +5,8 @@ namespace FleetTracker.Application.Features.Tours.Commands.CreateTour;
 
 public sealed record CreateTourCommand(
     Guid VehicleId,
+    Guid DriverId,
     DateOnly Date,
-    int TourNumber,
     int UnloadCount,
     decimal WeightKg,
     decimal DistanceKm) : IRequest<TourResponse>;

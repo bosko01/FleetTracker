@@ -1,11 +1,13 @@
 using FleetTracker.Application.Features.Statistics.Queries.GetVehicleDailySummary;
 using FleetTracker.Application.Features.Statistics.Queries.GetVehicleTotalMileage;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FleetTracker.API.Controllers;
 
 [ApiController]
+[Authorize(Roles = "Admin")]
 [Route("api/vehicles/{vehicleId:guid}")]
 public sealed class VehicleStatisticsController : ControllerBase
 {

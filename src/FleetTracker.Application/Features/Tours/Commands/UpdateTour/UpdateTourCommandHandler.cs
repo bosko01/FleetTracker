@@ -9,12 +9,14 @@ public sealed class UpdateTourCommandHandler : IRequestHandler<UpdateTourCommand
 {
     private readonly ITourRepository _tourRepository;
     private readonly IVehicleRepository _vehicleRepository;
+    private readonly IDriverRepository _driverRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public UpdateTourCommandHandler(ITourRepository tourRepository, IVehicleRepository vehicleRepository, IUnitOfWork unitOfWork)
+    public UpdateTourCommandHandler(ITourRepository tourRepository, IVehicleRepository vehicleRepository, IDriverRepository driverRepository, IUnitOfWork unitOfWork)
     {
         _tourRepository = tourRepository;
         _vehicleRepository = vehicleRepository;
+        _driverRepository = driverRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -23,19 +25,35 @@ public sealed class UpdateTourCommandHandler : IRequestHandler<UpdateTourCommand
         var tour = await _tourRepository.GetByIdAsync(request.Id, cancellationToken)
                    ?? throw new NotFoundException("Tour not found.");
 
-        var vehicle = await _vehicleRepository.GetByIdAsync(tour.VehicleId, cancellationToken)
+        var vehicle = await _vehicleRepository.GetByIdAsync(request.VehicleId, cancellationToken)
                       ?? throw new NotFoundException("Vehicle not found.");
 
         if (vehicle.IsDeleted)
             throw new NotFoundException("Vehicle not found.");
 
-        if (await _tourRepository.ExistsByVehicleDateAndTourNumberAsync(tour.VehicleId, request.Date, request.TourNumber, tour.Id, cancellationToken))
-            throw new ConflictException("Tour number already exists for this vehicle and date.");
+        var driver = await _driverRepository.GetByIdAsync(request.DriverId, cancellationToken)
+                     ?? throw new NotFoundException("Driver not found.");
 
-        tour.Update(request.Date, request.TourNumber, request.UnloadCount, request.WeightKg, request.DistanceKm);
+        if (!driver.IsActive)
+            throw new ConflictException("Driver is inactive.");
+
+        var nextTourNumber = tour.TourNumber;
+        var targetChanged = tour.VehicleId != request.VehicleId || tour.Date != request.Date;
+        if (targetChanged)
+        {
+            var currentNumberTaken = await _tourRepository.ExistsByVehicleDateAndTourNumberAsync(request.VehicleId, request.Date, tour.TourNumber, tour.Id, cancellationToken);
+            if (currentNumberTaken)
+            {
+                nextTourNumber = await _tourRepository.GetMaxTourNumberForVehicleAndDateAsync(request.VehicleId, request.Date, cancellationToken) + 1;
+                while (await _tourRepository.ExistsByVehicleDateAndTourNumberAsync(request.VehicleId, request.Date, nextTourNumber, tour.Id, cancellationToken))
+                    nextTourNumber++;
+            }
+        }
+
+        tour.Update(request.VehicleId, request.DriverId, request.Date, nextTourNumber, request.UnloadCount, request.WeightKg, request.DistanceKm);
         _tourRepository.Update(tour);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return new TourResponse(tour.Id, tour.VehicleId, tour.Date, tour.TourNumber, tour.UnloadCount, tour.WeightKg, tour.DistanceKm);
+        return new TourResponse(tour.Id, tour.VehicleId, vehicle.RegistrationPlate, tour.DriverId, driver.FullName, tour.Date, tour.TourNumber, tour.UnloadCount, tour.WeightKg, tour.DistanceKm);
     }
 }

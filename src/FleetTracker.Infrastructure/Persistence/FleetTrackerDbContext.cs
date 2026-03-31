@@ -11,6 +11,8 @@ public sealed class FleetTrackerDbContext : DbContext
 
     public DbSet<Vehicle> Vehicles => Set<Vehicle>();
     public DbSet<Tour> Tours => Set<Tour>();
+    public DbSet<Driver> Drivers => Set<Driver>();
+    public DbSet<AdminUser> AdminUsers => Set<AdminUser>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

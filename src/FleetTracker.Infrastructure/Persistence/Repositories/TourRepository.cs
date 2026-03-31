@@ -31,6 +31,38 @@ public sealed class TourRepository : ITourRepository
             .OrderBy(t => t.TourNumber)
             .ToListAsync(cancellationToken);
 
+    public async Task<IReadOnlyList<Tour>> GetByDriverAndDateAsync(Guid driverId, DateOnly date, CancellationToken cancellationToken) =>
+        await _dbContext.Tours.AsNoTracking()
+            .Where(t => t.DriverId == driverId && t.Date == date)
+            .OrderByDescending(t => t.CreatedAtUtc)
+            .ToListAsync(cancellationToken);
+
+    public async Task<IReadOnlyList<Tour>> GetFilteredAsync(DateOnly? date, Guid? vehicleId, Guid? driverId, CancellationToken cancellationToken)
+    {
+        var query = _dbContext.Tours.AsNoTracking().AsQueryable();
+
+        if (date.HasValue)
+            query = query.Where(x => x.Date == date.Value);
+
+        if (vehicleId.HasValue)
+            query = query.Where(x => x.VehicleId == vehicleId.Value);
+
+        if (driverId.HasValue)
+            query = query.Where(x => x.DriverId == driverId.Value);
+
+        return await query.OrderByDescending(x => x.Date).ThenBy(x => x.TourNumber).ToListAsync(cancellationToken);
+    }
+
+    public async Task<int> GetMaxTourNumberForVehicleAndDateAsync(Guid vehicleId, DateOnly date, CancellationToken cancellationToken)
+    {
+        var max = await _dbContext.Tours
+            .Where(t => t.VehicleId == vehicleId && t.Date == date)
+            .Select(t => (int?)t.TourNumber)
+            .MaxAsync(cancellationToken);
+
+        return max ?? 0;
+    }
+
     public async Task<bool> ExistsByVehicleDateAndTourNumberAsync(Guid vehicleId, DateOnly date, int tourNumber, Guid? excludeId, CancellationToken cancellationToken) =>
         await _dbContext.Tours.AnyAsync(t =>
             t.VehicleId == vehicleId &&

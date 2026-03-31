@@ -33,6 +33,7 @@ public sealed class GetVehicleDailySummaryQueryHandler : IRequestHandler<GetVehi
             tours.Count,
             tours.Sum(t => t.UnloadCount),
             tours.Sum(t => t.WeightKg),
-            tours.Sum(t => t.DistanceKm));
+            tours.Sum(t => t.DistanceKm),
+            tours.Select(t => t.DriverId).Distinct().Count());
     }
 }
