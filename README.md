@@ -14,3 +14,8 @@ Clean Architecture + CQRS ASP.NET Core Web API for fleet and tour tracking.
 - Vehicles are soft deleted.
 - Daily and total mileage are calculated from `Tours`.
 - Use `dotnet ef migrations add InitialCreate --project src/FleetTracker.Infrastructure --startup-project src/FleetTracker.API` to create the initial migration.
+
+
+## LLM documentation
+
+- Detailed project documentation optimized for LLM context loading: `LLM_PROJECT_DOCUMENTATION.md`.
