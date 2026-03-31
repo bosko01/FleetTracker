@@ -5,11 +5,13 @@ using FleetTracker.Application.Features.Vehicles.Commands.UpdateVehicle;
 using FleetTracker.Application.Features.Vehicles.Queries.GetAllVehicles;
 using FleetTracker.Application.Features.Vehicles.Queries.GetVehicleById;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FleetTracker.API.Controllers;
 
 [ApiController]
+[Authorize(Roles = "Admin")]
 [Route("api/vehicles")]
 public sealed class VehiclesController : ControllerBase
 {

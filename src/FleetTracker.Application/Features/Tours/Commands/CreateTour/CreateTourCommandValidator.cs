@@ -7,8 +7,7 @@ public sealed class CreateTourCommandValidator : AbstractValidator<CreateTourCom
     public CreateTourCommandValidator()
     {
         RuleFor(x => x.VehicleId).NotEmpty();
-        RuleFor(x => x.Date).NotEmpty();
-        RuleFor(x => x.TourNumber).GreaterThan(0);
+        RuleFor(x => x.DriverId).NotEmpty();
         RuleFor(x => x.UnloadCount).GreaterThanOrEqualTo(0);
         RuleFor(x => x.WeightKg).GreaterThanOrEqualTo(0);
         RuleFor(x => x.DistanceKm).GreaterThan(0);

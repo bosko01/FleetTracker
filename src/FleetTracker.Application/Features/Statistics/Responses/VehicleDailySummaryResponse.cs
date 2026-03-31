@@ -4,7 +4,8 @@ public sealed record VehicleDailySummaryResponse(
     Guid VehicleId,
     string RegistrationPlate,
     DateOnly Date,
-    int TourCount,
-    int TotalUnloadCount,
+    int TotalTours,
+    int TotalUnloads,
     decimal TotalWeightKg,
-    decimal TotalDistanceKm);
+    decimal TotalDistanceKm,
+    int DistinctDriversCount);

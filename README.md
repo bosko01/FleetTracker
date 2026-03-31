@@ -19,3 +19,8 @@ Clean Architecture + CQRS ASP.NET Core Web API for fleet and tour tracking.
 ## LLM documentation
 
 - Detailed project documentation optimized for LLM context loading: `LLM_PROJECT_DOCUMENTATION.md`.
+
+## Development Admin Login
+
+In development, a default admin user is seeded from `AdminSeed` in `src/FleetTracker.API/appsettings.json` (default: `admin` / `Admin123!`).
+Change these values before production.

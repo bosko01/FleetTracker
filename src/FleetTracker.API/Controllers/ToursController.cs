@@ -6,11 +6,13 @@ using FleetTracker.Application.Features.Tours.Queries.GetTourById;
 using FleetTracker.Application.Features.Tours.Queries.GetToursByVehicle;
 using FleetTracker.Application.Features.Tours.Queries.GetToursByVehicleAndDate;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FleetTracker.API.Controllers;
 
 [ApiController]
+[Authorize(Roles = "Admin")]
 public sealed class ToursController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -23,7 +25,7 @@ public sealed class ToursController : ControllerBase
     [HttpPost("api/vehicles/{vehicleId:guid}/tours")]
     public async Task<IActionResult> Create(Guid vehicleId, [FromBody] CreateTourRequest request, CancellationToken cancellationToken)
     {
-        var response = await _mediator.Send(new CreateTourCommand(vehicleId, request.Date, request.TourNumber, request.UnloadCount, request.WeightKg, request.DistanceKm), cancellationToken);
+        var response = await _mediator.Send(new CreateTourCommand(vehicleId, request.DriverId, request.Date, request.UnloadCount, request.WeightKg, request.DistanceKm), cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
     }
 
@@ -47,7 +49,7 @@ public sealed class ToursController : ControllerBase
     [HttpPut("api/tours/{id:guid}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateTourRequest request, CancellationToken cancellationToken)
     {
-        var response = await _mediator.Send(new UpdateTourCommand(id, request.Date, request.TourNumber, request.UnloadCount, request.WeightKg, request.DistanceKm), cancellationToken);
+        var response = await _mediator.Send(new UpdateTourCommand(id, request.VehicleId, request.DriverId, request.Date, request.UnloadCount, request.WeightKg, request.DistanceKm), cancellationToken);
         return Ok(response);
     }
 

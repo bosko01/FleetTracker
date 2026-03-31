@@ -12,6 +12,7 @@ public sealed class TourConfiguration : IEntityTypeConfiguration<Tour>
 
         builder.HasKey(x => x.Id);
         builder.Property(x => x.VehicleId).IsRequired();
+        builder.Property(x => x.DriverId).IsRequired();
         builder.Property(x => x.Date).IsRequired();
         builder.Property(x => x.TourNumber).IsRequired();
         builder.Property(x => x.UnloadCount).IsRequired();

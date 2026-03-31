@@ -5,8 +5,9 @@ namespace FleetTracker.Application.Features.Tours.Commands.UpdateTour;
 
 public sealed record UpdateTourCommand(
     Guid Id,
+    Guid VehicleId,
+    Guid DriverId,
     DateOnly Date,
-    int TourNumber,
     int UnloadCount,
     decimal WeightKg,
     decimal DistanceKm) : IRequest<TourResponse>;
